@@ -1,49 +1,88 @@
+const btn = document.querySelector('.form__btn');
 const input = document.querySelector('.input');
-const btn = document.querySelector('.btn');
-const taskContainer = document.querySelector('.field__tasks');
+const taskContainer = document.querySelector('.tasks__container');
 
-/* let Data = JSON.parse(localStorage.getItem('data')) || []; */
-
-let Data = localStorage.getItem(JSON.stringify('data')) || [];
+let allData = JSON.parse(localStorage.getItem('task')) || [];
 
 btn.addEventListener('click', function(){
-    const val = input.value;
 
-    if(val){
-        Data.push({
-            name: val,
-            isChecked: false
-        })
+    let val = input.value;
+
+    if(!val){
+        console.log('Writte down task')
+        return '';
     }
 
-    input.value = '';
-    fillHTML(Data);
+    allData.push({
+        name: val,
+        isCheked: false,
+    })
+
+    fillHTML();
     setLS();
+
+    input.value = '';
 })
 
+window.addEventListener('load', function(){
+    fillHTML();
+})
+
+const fillHTML = () => {
+    taskContainer.innerHTML = '';
+
+    allData.forEach((item, index) => {
+        taskContainer.innerHTML += createTemplates(item, index);
+    })
+}
 
 const setLS = () => {
-    localStorage.setItem('data', JSON.stringify(Data));
+    localStorage.setItem('task', JSON.stringify(allData));
 }
 
-
-const fillHTML = (Data) => {
-    Data.forEach((elem, index) => {
-        taskContainer.innerHTML += createTemplates(elem, index);
-    });
-}
-
-const createTemplates = (elem, index) => {
+const createTemplates = (item, index) => {
     return `
-        
+    <div class="task">
+        <div class="text">${item.name}</div>
+        <div class="task__control">
+            <input type="checkbox" class="checkbox">
+            <button onclick="deliteTask(${index})" class="delite__task">&#10060</button>
+        </div>
+    </div>
     `
 }
+
+const deliteTask = (index) => {
+    allData.splice(index, 1);
+    setLS();
+    fillHTML();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 /* active placeholder */
 
-const fakePLaceholder = input.closest('.fake__placeholder');
+/* const fakePLaceholder = input.closest('.fake__placeholder');
 
 input.addEventListener('focus', function(){
     input.nextElementSibling.classList.add('active');
@@ -56,27 +95,5 @@ input.addEventListener('blur', function(){
     
     input.nextElementSibling.classList.remove('active');
     
-})
+}) */
 
-
-/*     const formInput = document.querySelectorAll('.form__input');
-
-    formInput.forEach(item => {
-
-        const parent = item.closest('.form__item');
-        const placeholder = parent.querySelector('.fake__placeholder');
-        
-
-        item.addEventListener('focus', function(){
-            placeholder.classList.add('active');
-        });
-
-        item.addEventListener('blur', function(){
-            if(item.value.length > 0){
-                placeholder.classList.add('active');
-            }else{
-                placeholder.classList.remove('active');
-            }
-        })
-
-    }); */
